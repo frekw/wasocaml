@@ -1,8 +1,8 @@
 (module
-  (type $Float (struct (field (mut f64))))
-  (type $String (array (mut i8)))
-  (type $Array (array (mut (ref eq))))
-  (type $FloatArray (array (mut f64)))
+  (type $float (struct (field (mut f64))))
+  (type $string (array (mut i8)))
+  (type $array (array (mut (ref eq))))
+  (type $floatarray (array (mut f64)))
 
   (func (export "compare_ints") (param $a (ref eq)) (param $b (ref eq)) (result (ref eq))
     (local $a' i32) (local $b' i32)
@@ -16,8 +16,8 @@
 
   (func (export "compare_floats") (param $a (ref eq)) (param $b (ref eq)) (result (ref eq))
     (local $a' f64) (local $b' f64)
-    (local.set $a' (struct.get $Float 0 (ref.cast $Float (local.get $a))))
-    (local.set $b' (struct.get $Float 0 (ref.cast $Float (local.get $b))))
+    (local.set $a' (struct.get $float 0 (ref.cast $float (local.get $a))))
+    (local.set $b' (struct.get $float 0 (ref.cast $float (local.get $b))))
     (ref.i31
       (i32.add
         (i32.sub
@@ -33,58 +33,58 @@
 
   (func $array_length (export "array_length") (param $arr (ref eq)) (result (ref eq))
     (ref.i31 (array.len
-      (block $floatarray (result (ref $FloatArray))
-        (br_on_cast $floatarray $FloatArray (local.get $arr))
-        (return (ref.i31 (array.len (ref.cast $Array)))))))
+      (block $floatarray (result (ref $floatarray))
+        (br_on_cast $floatarray $floatarray (local.get $arr))
+        (return (ref.i31 (array.len (ref.cast $array)))))))
   )
 
-  (func $array_get_float_safe (param $arr (ref $FloatArray)) (param $field (ref eq)) (result (ref $Float))
+  (func $array_get_float_safe (param $arr (ref $floatarray)) (param $field (ref eq)) (result (ref $float))
     ;; TODO exceptions
-    (struct.new_canon $Float
-      (array.get $FloatArray
+    (struct.new_canon $float
+      (array.get $floatarray
         (local.get $arr)
         (i31.get_s (ref.cast (ref i31) (local.get $field)))))
   )
 
   (func (export "array_get_float_safe") (param $arr (ref eq)) (param $field (ref eq)) (result (ref eq))
     (call $array_get_float_safe
-      (ref.cast $FloatArray (local.get $arr))
+      (ref.cast $floatarray (local.get $arr))
       (local.get $field)))
 
-  (func $array_get_int_or_addr_safe (param $arr (ref $Array)) (param $field (ref eq)) (result (ref eq))
+  (func $array_get_int_or_addr_safe (param $arr (ref $array)) (param $field (ref eq)) (result (ref eq))
     ;; TODO exceptions
-    (array.get $Array
+    (array.get $array
       (local.get $arr)
       (i31.get_s (ref.cast (ref i31) (local.get $field))))
   )
 
   (func (export "array_get_int_or_addr_safe") (param $arr (ref eq)) (param $field (ref eq)) (result (ref eq))
-    (call $array_get_int_or_addr_safe (ref.cast $Array (local.get $arr)) (local.get $field)))
+    (call $array_get_int_or_addr_safe (ref.cast $array (local.get $arr)) (local.get $field)))
 
   (func $array_get_safe (param $arr (ref eq)) (param $field (ref eq)) (result (ref eq))
     (return
       (call $array_get_float_safe
-        (block $floatarray (result (ref $FloatArray))
-          (br_on_cast $floatarray $FloatArray (local.get $arr))
-          (return (call $array_get_int_or_addr_safe (ref.cast $Array) (local.get $field))))
+        (block $floatarray (result (ref $floatarray))
+          (br_on_cast $floatarray $floatarray (local.get $arr))
+          (return (call $array_get_int_or_addr_safe (ref.cast $array) (local.get $field))))
         (local.get $field)))
   )
 
   (export "array_get_safe" (func $array_get_safe))
   (export "array_get_unsafe" (func $array_get_safe))
 
-  (func $array_set_float_unsafe (param $arr (ref $FloatArray)) (param $field (ref eq))
+  (func $array_set_float_unsafe (param $arr (ref $floatarray)) (param $field (ref eq))
                                 (param $value (ref eq)) (result (ref eq))
-      (array.set $FloatArray
+      (array.set $floatarray
         (local.get $arr)
         (i31.get_s (ref.cast (ref i31) (local.get $field)))
-        (struct.get $Float 0 (ref.cast $Float (local.get $value))))
+        (struct.get $float 0 (ref.cast $float (local.get $value))))
       (ref.i31 (i32.const 0))
   )
 
-  (func $array_set_int_or_addr_unsafe (param $arr (ref $Array)) (param $field (ref eq))
+  (func $array_set_int_or_addr_unsafe (param $arr (ref $array)) (param $field (ref eq))
                                       (param $value (ref eq)) (result (ref eq))
-      (array.set $Array
+      (array.set $array
         (local.get $arr)
         (i31.get_s (ref.cast (ref i31) (local.get $field)))
         (local.get $value))
@@ -96,11 +96,11 @@
                           (param $value (ref eq)) (result (ref eq))
     (return
       (call $array_set_float_unsafe
-        (block $floatarray (result (ref $FloatArray))
-          (br_on_cast $floatarray $FloatArray (local.get $arr))
+        (block $floatarray (result (ref $floatarray))
+          (br_on_cast $floatarray $floatarray (local.get $arr))
           (return
             (call $array_set_int_or_addr_unsafe
-              (ref.cast $Array) (local.get $field) (local.get $value))))
+              (ref.cast $array) (local.get $field) (local.get $value))))
         (local.get $field)
         (local.get $value)
       ))
@@ -120,8 +120,8 @@
   (func (export "bytes_set") (param $arr (ref eq)) (param $field (ref eq))
                              (param $value (ref eq)) (result (ref eq))
       ;; TODO exceptions
-      (array.set $String
-        (ref.cast $String (local.get $arr))
+      (array.set $string
+        (ref.cast $string (local.get $arr))
         (i31.get_s (ref.cast (ref i31) (local.get $field)))
         (i31.get_s (ref.cast (ref i31) (local.get $value))))
       (ref.i31 (i32.const 0))
@@ -131,12 +131,12 @@
                               (result (ref eq))
       ;; TODO exceptions
       (ref.i31
-        (array.get_s $String
-          (ref.cast $String (local.get $arr))
+        (array.get_s $string
+          (ref.cast $string (local.get $arr))
           (i31.get_s (ref.cast (ref i31) (local.get $field)))))
   )
 
-  (func $string_eq (param $a (ref $String)) (param $b (ref $String)) (result i32)
+  (func $string_eq (param $a (ref $string)) (param $b (ref $string)) (result i32)
     (local $len_a i32)
     (local $len_b i32)
     (local $pos i32)
@@ -150,8 +150,8 @@
       (if (i32.eq (local.get $len_a) (local.get $pos))
         (then (return (i32.const 1)))
         (else))
-      (if (i32.ne (array.get_s $String (local.get $a) (local.get $pos))
-                  (array.get_s $String (local.get $b) (local.get $pos)))
+      (if (i32.ne (array.get_s $string (local.get $a) (local.get $pos))
+                  (array.get_s $string (local.get $b) (local.get $pos)))
         (then (return (i32.const 0)))
         (else
           (local.set $pos (i32.add (i32.const 1) (local.get $pos)))
@@ -161,7 +161,7 @@
 
   (func (export "string_eq") (param $a (ref eq)) (param $b (ref eq)) (result (ref eq))
     (ref.i31
-      (call $string_eq (ref.cast $String (local.get $a)) (ref.cast $String (local.get $b))))
+      (call $string_eq (ref.cast $string (local.get $a)) (ref.cast $string (local.get $b))))
   )
 
   ;; ==========

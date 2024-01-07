@@ -1,13 +1,13 @@
 (module
-  (type $Float (struct (field (mut f64))))
+  (type $float (struct (field (mut f64))))
   (type $Int64 (struct (field (mut i64))))
-  (type $String (array (mut i8)))
+  (type $string (array (mut i8)))
 
   (import "runtime" "string_eq"
     (func $string_eq (param $a (ref eq)) (param $b (ref eq)) (result (ref eq))))
 
-  (func (export "caml_int64_float_of_bits") (param $x (ref eq)) (result (ref $Float))
-    (struct.new_canon $Float
+  (func (export "caml_int64_float_of_bits") (param $x (ref eq)) (result (ref $float))
+    (struct.new_canon $float
       (f64.reinterpret_i64
         (struct.get $Int64 0 (ref.cast $Int64 (local.get $x))))))
 
@@ -41,16 +41,16 @@
   ;; =====
 
   (func (export "caml_create_bytes") (param $size (ref eq)) (result (ref eq))
-      (array.new_canon_default $String (i31.get_s (ref.cast (ref i31) (local.get $size))))
+      (array.new_canon_default $string (i31.get_s (ref.cast (ref i31) (local.get $size))))
   )
 
-  (func $caml_fill_bytes (param $arr (ref $String))
+  (func $caml_fill_bytes (param $arr (ref $string))
                          (param $off i32) (param $length i32)
                          (param $value i32)
     (block $break
       (loop $continue
         (br_if $break (i32.le_s (local.get $length) (i32.const 0)))
-        (array.set $String (local.get $arr) (local.get $off) (local.get $value))
+        (array.set $string (local.get $arr) (local.get $off) (local.get $value))
         (local.set $off (i32.add (local.get $off) (i32.const 1)))
         (local.set $length (i32.sub (local.get $length) (i32.const 1)))
         (br $continue)
@@ -62,7 +62,7 @@
                                    (param $off (ref eq)) (param $length (ref eq))
                                    (param $value (ref eq)) (result (ref eq))
     (call $caml_fill_bytes
-      (ref.cast $String (local.get $arr))
+      (ref.cast $string (local.get $arr))
       (i31.get_s (ref.cast (ref i31) (local.get $off)))
       (i31.get_s (ref.cast (ref i31) (local.get $length)))
       (i31.get_s (ref.cast (ref i31) (local.get $value))))

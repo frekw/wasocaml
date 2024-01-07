@@ -1,11 +1,11 @@
 (module
-  (type $Float (struct (field (mut f64))))
+  (type $float (struct (field (mut f64))))
   (type $Int64 (struct (field (mut i64))))
-  (type $String (array (mut i8)))
-  (type $Gen_block (array (mut (ref eq))))
+  (type $string (array (mut i8)))
+  (type $gen_block (array (mut (ref eq))))
 
 
-  (import "js_runtime" "print_string" (func $print_string (param (ref $String))))
+  (import "js_runtime" "print_string" (func $print_string (param (ref $string))))
   (import "js_runtime" "print_string_mem"
     (func $print_string_mem (param i32) (param i32)))
   (import "js_runtime" "print_endline" (func $print_endline))
@@ -24,8 +24,8 @@
   (import "runtime" "string_eq"
     (func $string_eq (param $a (ref eq)) (param $b (ref eq)) (result (ref eq))))
 
-  (func (export "caml_int64_float_of_bits") (param $x (ref eq)) (result (ref $Float))
-    (struct.new $Float
+  (func (export "caml_int64_float_of_bits") (param $x (ref eq)) (result (ref $float))
+    (struct.new $float
       (f64.reinterpret_i64
         (struct.get $Int64 0 (ref.cast $Int64 (local.get $x))))))
 
@@ -59,16 +59,16 @@
   ;; =====
 
   (func (export "caml_create_bytes") (param $size (ref eq)) (result (ref eq))
-      (array.new_default $String (i31.get_s (ref.cast (ref i31) (local.get $size))))
+      (array.new_default $string (i31.get_s (ref.cast (ref i31) (local.get $size))))
   )
 
-  ;; (func $caml_fill_bytes (param $arr (ref $String))
+  ;; (func $caml_fill_bytes (param $arr (ref $string))
   ;;                        (param $off i32) (param $length i32)
   ;;                        (param $value i32)
   ;;   (block $break
   ;;     (loop $continue
   ;;       (br_if $break (i32.le_s (local.get $length) (i32.const 0)))
-  ;;       (array.set $String (local.get $arr) (local.get $off) (local.get $value))
+  ;;       (array.set $string (local.get $arr) (local.get $off) (local.get $value))
   ;;       (local.set $off (i32.add (local.get $off) (i32.const 1)))
   ;;       (local.set $length (i32.sub (local.get $length) (i32.const 1)))
   ;;       (br $continue)
@@ -80,7 +80,7 @@
   ;;                                  (param $off (ref eq)) (param $length (ref eq))
   ;;                                  (param $value (ref eq)) (result (ref eq))
   ;;   (call $caml_fill_bytes
-  ;;     (ref.cast $String (local.get $arr))
+  ;;     (ref.cast $string (local.get $arr))
   ;;     (i31.get_s (ref.cast (ref i31) (local.get $off)))
   ;;     (i31.get_s (ref.cast (ref i31) (local.get $length)))
   ;;     (i31.get_s (ref.cast (ref i31) (local.get $value))))
@@ -92,13 +92,13 @@
 
    ;; Stolen from Jerome's wasm_of_ocaml
    (func $compare_strings
-      (param $s1 (ref $String)) (param $s2 (ref $String)) (result i32)
+      (param $s1 (ref $string)) (param $s2 (ref $string)) (result i32)
       (local $l1 i32) (local $l2 i32) (local $len i32) (local $i i32)
       (local $c1 i32) (local $c2 i32)
       (if (ref.eq (local.get $s1) (local.get $s2))
          (then (return (i32.const 0))))
-      (local.set $l1 (array.len $String (local.get $s1)))
-      (local.set $l2 (array.len $String (local.get $s2)))
+      (local.set $l1 (array.len $string (local.get $s1)))
+      (local.set $l2 (array.len $string (local.get $s2)))
       (local.set $len
         (select (local.get $l1) (local.get $l2)
            (i32.le_u (local.get $l1) (local.get $l2))))
@@ -107,9 +107,9 @@
          (if (i32.lt_s (local.get $i) (local.get $len))
             (then
                (local.set $c1
-                  (array.get_u $String (local.get $s1) (local.get $i)))
+                  (array.get_u $string (local.get $s1) (local.get $i)))
                (local.set $c2
-                  (array.get_u $String (local.get $s2) (local.get $i)))
+                  (array.get_u $string (local.get $s2) (local.get $i)))
                (if (i32.ne (local.get $c1) (local.get $c2))
                   (then
                      (if (i32.le_u (local.get $c1) (local.get $c2))
@@ -121,8 +121,8 @@
 
   (func $caml_string_compare (param $a (ref eq)) (param $b (ref eq)) (result (ref i31))
       (ref.i31 (call $compare_strings
-        (ref.cast $String (local.get $a))
-        (ref.cast $String (local.get $b)))))
+        (ref.cast $string (local.get $a))
+        (ref.cast $string (local.get $b)))))
 
   (export "caml_bytes_compare" (func $caml_string_compare))
   (export "caml_string_compare" (func $caml_string_compare))
@@ -155,8 +155,8 @@
 
   ;; int < block < unknown
   (func (export "caml_compare") (param $a (ref eq)) (param $b (ref eq)) (result (ref i31))
-    (local $a_block (ref $Gen_block))
-    (local $b_block (ref $Gen_block))
+    (local $a_block (ref $gen_block))
+    (local $b_block (ref $gen_block))
     (if (result (ref i31)) (ref.test i31 (local.get $a))
       (then
         (if (result (ref i31)) (ref.test i31 (local.get $b))
@@ -168,18 +168,18 @@
         (then (ref.i31 (i32.const 1)))
         (else
           (local.set $b_block
-          (block $both_block (result (ref $Gen_block))
+          (block $both_block (result (ref $gen_block))
             (local.set $a_block
-            (block $a_is_block (result (ref $Gen_block))
-              (drop (br_on_cast $a_is_block (ref eq) (ref $Gen_block) (local.get $a)))
+            (block $a_is_block (result (ref $gen_block))
+              (drop (br_on_cast $a_is_block (ref eq) (ref $gen_block) (local.get $a)))
               (return_call $caml_compare_data_non_block (local.get $a) (local.get $b))
             ))
             ;; a block, b unknown
-            (drop (br_on_cast $both_block (ref eq) (ref $Gen_block) (local.get $b)))
+            (drop (br_on_cast $both_block (ref eq) (ref $gen_block) (local.get $b)))
             (return (ref.i31 (i32.const -1)))
           ))
           ;; Both blocks (test b = block)
-          (local.set $a_block (ref.cast $Gen_block (local.get $a)))
+          (local.set $a_block (ref.cast $gen_block (local.get $a)))
           ;; This cast shouldn't be required
           (return_call $caml_compare_blocks (local.get $a_block) (local.get $b_block))
         )
@@ -189,16 +189,16 @@
   )
 
   (func $caml_compare_data_non_block (export "compare_data_non_block") (param $a (ref eq)) (param $b (ref eq)) (result (ref i31))
-    ;; (block $both_string (result (ref $String))
+    ;; (block $both_string (result (ref $string))
 
     ;; )
     (return_call $caml_string_compare (local.get $a) (local.get $b))
   )
 
-  (func $caml_compare_blocks (param $a (ref $Gen_block)) (param $b (ref $Gen_block)) (result (ref i31))
+  (func $caml_compare_blocks (param $a (ref $gen_block)) (param $b (ref $gen_block)) (result (ref i31))
     (local $len_a i32) (local $len_b i32)
-    (local.set $len_a (array.len $Gen_block (local.get $a)))
-    (local.set $len_b (array.len $Gen_block (local.get $b)))
+    (local.set $len_a (array.len $gen_block (local.get $a)))
+    (local.set $len_b (array.len $gen_block (local.get $b)))
     (if (i32.ne (local.get $len_a) (local.get $len_b))
         (then
           (return (ref.i31
@@ -210,8 +210,8 @@
   )
 
   (func $caml_equal (export "caml_equal") (param $a (ref eq)) (param $b (ref eq)) (result (ref i31))
-    (local $a_block (ref $Gen_block))
-    (local $b_block (ref $Gen_block))
+    (local $a_block (ref $gen_block))
+    (local $b_block (ref $gen_block))
     (if (result (ref i31)) (ref.test i31 (local.get $a))
       (then
         (if (result (ref i31)) (ref.test i31 (local.get $b))
@@ -223,19 +223,19 @@
         (then (ref.i31 (i32.const 0)))
         (else
           (local.set $b_block
-          (block $both_block (result (ref $Gen_block))
+          (block $both_block (result (ref $gen_block))
             (local.set $a_block
-            (block $a_is_block (result (ref $Gen_block))
-              (drop (br_on_cast $a_is_block (ref eq) (ref $Gen_block) (local.get $a)))
+            (block $a_is_block (result (ref $gen_block))
+              (drop (br_on_cast $a_is_block (ref eq) (ref $gen_block) (local.get $a)))
               (return_call $equal_data_non_block (local.get $a) (local.get $b))
             ))
             (drop (local.get $a_block))
             ;; a block, b unknown
-            (drop (br_on_cast $both_block (ref eq) (ref $Gen_block) (local.get $b)))
+            (drop (br_on_cast $both_block (ref eq) (ref $gen_block) (local.get $b)))
             (return (ref.i31 (i32.const 0)))
           ))
           ;; Both blocks (test b = block)
-          (local.set $a_block (ref.cast $Gen_block (local.get $a)))
+          (local.set $a_block (ref.cast $gen_block (local.get $a)))
           ;; This cast shouldn't be required
           (return_call $equal_blocks (local.get $a_block) (local.get $b_block))
         )
@@ -248,26 +248,26 @@
     (ref.i31 (i32.eq
       (i32.const 0)
       (call $compare_strings
-        (ref.cast $String (local.get $a))
-        (ref.cast $String (local.get $b)))))
+        (ref.cast $string (local.get $a))
+        (ref.cast $string (local.get $b)))))
   )
 
-  (func $equal_blocks (param $a (ref $Gen_block)) (param $b (ref $Gen_block)) (result (ref i31))
+  (func $equal_blocks (param $a (ref $gen_block)) (param $b (ref $gen_block)) (result (ref i31))
     (local $len_a i32)
     (local $len_b i32)
     (local $v_a (ref eq))
     (local $v_b (ref eq))
     (local $i i32)
-    (local.set $len_a (array.len $Gen_block (local.get $a)))
-    (local.set $len_b (array.len $Gen_block (local.get $b)))
+    (local.set $len_a (array.len $gen_block (local.get $a)))
+    (local.set $len_b (array.len $gen_block (local.get $b)))
     (if (i32.ne (local.get $len_a) (local.get $len_b))
         (then (return (ref.i31 (i32.const 0)))))
     ;; Same length
     (loop $loop
       (if (i32.eq (local.get $i) (local.get $len_a))
         (then (return (ref.i31 (i32.const 1)))))
-      (local.set $v_a (array.get $Gen_block (local.get $a) (local.get $i)))
-      (local.set $v_b (array.get $Gen_block (local.get $b) (local.get $i)))
+      (local.set $v_a (array.get $gen_block (local.get $a) (local.get $i)))
+      (local.set $v_b (array.get $gen_block (local.get $b) (local.get $i)))
       (if (ref.eq
             (ref.i31 (i32.const 0))
             (call $caml_equal (local.get $v_a) (local.get $v_b)))
@@ -296,7 +296,7 @@
 
    ;; Stolen from Jerome's wasm_of_ocaml
    (func $format_int_default (param $d i32) (result (ref eq))
-      (local $s (ref $String))
+      (local $s (ref $string))
       (local $negative i32) (local $i i32) (local $n i32)
       (if (i32.lt_s (local.get $d) (i32.const 0))
          (then
@@ -308,17 +308,17 @@
          (local.set $i (i32.add (local.get $i) (i32.const 1)))
          (local.set $n (i32.div_u (local.get $n) (i32.const 10)))
          (br_if $count (local.get $n)))
-      (local.set $s (array.new $String (i32.const 0) (local.get $i)))
+      (local.set $s (array.new $string (i32.const 0) (local.get $i)))
       (loop $write
          (local.set $i (i32.sub (local.get $i) (i32.const 1)))
-         (array.set $String (local.get $s) (local.get $i)
+         (array.set $string (local.get $s) (local.get $i)
             (i32.add (i32.const 48)
                (i32.rem_u (local.get $d) (i32.const 10))))
          (local.set $d (i32.div_u (local.get $d) (i32.const 10)))
          (br_if $write (local.get $d)))
       (if (local.get $negative)
          (then
-            (array.set $String (local.get $s) (i32.const 0)
+            (array.set $string (local.get $s) (i32.const 0)
                (i32.const 45)))) ;; '-'
       (local.get $s))
 
@@ -357,8 +357,8 @@
       (call $flush)
       (ref.i31 (i32.const 0)))
 
-  (func $cons (param $h (ref eq)) (param $t (ref eq)) (result (ref $Gen_block))
-     (array.new_fixed $Gen_block
+  (func $cons (param $h (ref eq)) (param $t (ref eq)) (result (ref $gen_block))
+     (array.new_fixed $gen_block
        (ref.i31 (i32.const 0))
        (local.get $h)
        (local.get $t)))
@@ -380,8 +380,8 @@
          (if (i32.gt_s (local.get $len) (i32.const 0))
             (then
                (call $putchar
-                  (array.get $String
-                    (ref.cast $String (local.get $s))
+                  (array.get $string
+                    (ref.cast $string (local.get $s))
                     (local.get $pos)))
                (local.set $pos (i32.add (local.get $pos) (i32.const 1)))
                (local.set $len (i32.sub (local.get $len) (i32.const 1)))
@@ -506,17 +506,17 @@
 
  (func $C_caml_sys_getenv  (export "caml_sys_getenv") (param (ref eq)) (result (ref eq)) (unreachable))
 
- (global $os_type (ref $String) (array.new_fixed $String (i32.const 87)(i32.const 97)(i32.const 115)(i32.const 109)))
+ (global $os_type (ref $string) (array.new_fixed $string (i32.const 87)(i32.const 97)(i32.const 115)(i32.const 109)))
 
  (func $C_caml_sys_get_config  (export "caml_sys_get_config") (param (ref eq)) (result (ref eq))
-   (array.new_fixed $Gen_block (ref.i31 (i32.const 0))
+   (array.new_fixed $gen_block (ref.i31 (i32.const 0))
      (global.get $os_type)
      (ref.i31 (i32.const 32))
      (ref.i31 (i32.const 0))
    )
  )
 
-  (global $executable_name (ref $String) (array.new_fixed $String (i32.const 119)(i32.const 97)(i32.const 115)(i32.const 111)(i32.const 99)(i32.const 97)(i32.const 109)(i32.const 108)(i32.const 95)(i32.const 98)(i32.const 105)(i32.const 110)(i32.const 97)(i32.const 114)(i32.const 121)))
+  (global $executable_name (ref $string) (array.new_fixed $string (i32.const 119)(i32.const 97)(i32.const 115)(i32.const 111)(i32.const 99)(i32.const 97)(i32.const 109)(i32.const 108)(i32.const 95)(i32.const 98)(i32.const 105)(i32.const 110)(i32.const 97)(i32.const 114)(i32.const 121)))
 
  (func $C_caml_sys_executable_name  (export "caml_sys_executable_name") (param (ref eq)) (result (ref eq))
    (global.get $executable_name))
@@ -586,15 +586,15 @@
     (ref.i31 (i32.const 0))
   )
   (func (export "print_float") (param $a (ref eq)) (result (ref eq))
-    (call $print_f64 (struct.get $Float 0 (ref.cast $Float (local.get $a))))
+    (call $print_f64 (struct.get $float 0 (ref.cast $float (local.get $a))))
     (ref.i31 (i32.const 0))
   )
 
   ;; (func (export "print_string") (param $a (ref eq)) (result (ref eq))
-  ;;   (call $print_string (ref.cast $String (local.get $a)))
+  ;;   (call $print_string (ref.cast $string (local.get $a)))
   ;;   (ref.i31 (i32.const 0)))
 
-  (func $copy_string (param $s (ref $String)) (result i32)
+  (func $copy_string (param $s (ref $string)) (result i32)
     (local $len i32)
     (local $pos i32)
     (local.set $len (array.len (local.get $s)))
@@ -604,7 +604,7 @@
            (then
               (i32.store8 $mem
                 (local.get $pos)
-                (array.get $String (local.get $s) (local.get $pos)))
+                (array.get $string (local.get $s) (local.get $pos)))
               (local.set $pos (i32.add (i32.const 1) (local.get $pos)))
               (br $continue)
            )
@@ -615,7 +615,7 @@
 
   (func (export "print_string") (param $a (ref eq)) (result (ref eq))
     (call $print_string_mem (i32.const 0)
-      (call $copy_string (ref.cast $String (local.get $a))))
+      (call $copy_string (ref.cast $string (local.get $a))))
     (ref.i31 (i32.const 0)))
 
   (func (export "print_endline") (param $a (ref eq)) (result (ref eq))

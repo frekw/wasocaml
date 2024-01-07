@@ -66,18 +66,18 @@ module Var = struct
         (C_import_atom.name_of_atoms results)
     | Block { size } -> Format.asprintf "$Block_%i" size
     | BlockFloat { size } -> Format.asprintf "$BlockFloat_%i" size
-    | Gen_block -> Format.asprintf "$Gen_block"
+    | Gen_block -> Format.asprintf "$gen_block"
     | Closure { arity; fields } -> Format.asprintf "$Closure_%i_%i" arity fields
     | Gen_closure { arity } -> Format.asprintf "$Gen_closure_%i" arity
     | Set_of_closures set ->
       Format.asprintf "$Set_of_closures_%a" Set_of_closures_id.print set
-    | Float -> "$Float"
+    | Float -> "$float"
     | Int32 -> "$Int32"
     | Int64 -> "$Int64"
     | Nativeint -> "$Nativeint"
-    | String -> "$String"
-    | Array -> "$Array"
-    | FloatArray -> "$FloatArray"
+    | String -> "$string"
+    | Array -> "$array"
+    | FloatArray -> "$floatarray"
     | Eq -> "eq"
     | Any -> "any"
     | I31 -> "i31"

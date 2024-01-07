@@ -1,5 +1,5 @@
 (module
-  (type $Float (struct (field (mut f64))))
+  (type $float (struct (field (mut f64))))
 
   (import "spectest" "print_i32" (func $print_i32 (param i32)))
   (import "spectest" "print_f64" (func $print_f64 (param f64)))
@@ -8,7 +8,7 @@
     (ref.i31 (i32.const 0))
   )
   (func (export "morteau") (param $a (ref eq)) (result (ref eq))
-    (call $print_f64 (struct.get $Float 0 (ref.cast $Float (local.get $a))))
+    (call $print_f64 (struct.get $float 0 (ref.cast $float (local.get $a))))
     (ref.i31 (i32.const 0))
   )
   (func (export "montbeliard") (param $a f64) (result (ref eq))
