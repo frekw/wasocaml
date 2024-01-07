@@ -1995,7 +1995,7 @@ module ToWasm = struct
 
   let gvar v = Global.name v
 
-  let unit = Cst.node "i31.new" [ C.i32 0l ]
+  let unit = Cst.node "ref.i31" [ C.i32 0l ]
 
   let nn_name (nn : Expr.nn) = match nn with S32 -> "32" | S64 -> "64"
 
@@ -2056,7 +2056,7 @@ module ToWasm = struct
   let conv_unop (op : Expr.unop) arg =
     match op with
     | I31_get_s -> Cst.node "i31.get_s" [ arg ]
-    | I31_new -> Cst.node "i31.new" [ arg ]
+    | I31_new -> Cst.node "ref.i31" [ arg ]
     | Struct_get { typ; field } -> C.struct_get typ field arg
     | Struct_get_packed { typ; field; extend } ->
       C.struct_get_packed extend typ field arg

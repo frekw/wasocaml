@@ -196,7 +196,7 @@ module C = struct
 
   let f64 f = node "f64.const" [ Float f ]
 
-  let i31_new i = node "i31.new" [ i ]
+  let i31_new i = node "ref.i31" [ i ]
 
   let drop arg = node "drop" [ arg ]
 

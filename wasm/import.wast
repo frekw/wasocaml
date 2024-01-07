@@ -33,7 +33,7 @@
       (global.set $oo_id
         (i32.add (i32.const 1)
           (local.tee $oo_id (global.get $oo_id))))
-      (i31.new (local.get $oo_id))
+      (ref.i31 (local.get $oo_id))
   )
 
   ;; =====
@@ -66,7 +66,7 @@
       (i31.get_s (ref.cast i31 (local.get $off)))
       (i31.get_s (ref.cast i31 (local.get $length)))
       (i31.get_s (ref.cast i31 (local.get $value))))
-    (i31.new (i32.const 0)))
+    (ref.i31 (i32.const 0)))
 
   (export "caml_bytes_equal" (func $string_eq))
   (export "caml_string_equal" (func $string_eq))
@@ -285,14 +285,14 @@
   (func (export "caml_register_named_value") (param (ref eq)) (param (ref eq))
                                  (result (ref eq))
       ;; TODO
-    (i31.new (i32.const 0)))
+    (ref.i31 (i32.const 0)))
 
 
   (func (export "caml_gc_major") (param (ref eq)) (result (ref eq))
-    (i31.new (i32.const 0)))
+    (ref.i31 (i32.const 0)))
 
   (func (export "caml_sys_const_naked_pointers_checked") (param (ref eq)) (result (ref eq))
-    (i31.new (i32.const 0)))
+    (ref.i31 (i32.const 0)))
 
   ;; ==================
   ;; CamlinternalFormat

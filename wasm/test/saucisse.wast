@@ -6,11 +6,11 @@
   (import "spectest" "print_f64" (func $print_f64 (param f64)))
   (func (export "saucisse") (param $a (ref eq)) (result (ref eq))
     (call $print_i32 (i31.get_s (ref.cast i31 (local.get $a))))
-    (i31.new (i32.const 0))
+    (ref.i31 (i32.const 0))
   )
   (func (export "saucissef") (param $a (ref eq)) (result (ref eq))
     (call $print_f64 (struct.get $Float 0 (ref.cast $Float (local.get $a))))
-    (i31.new (i32.const 0))
+    (ref.i31 (i32.const 0))
   )
 
   (func (export "caml_int64_float_of_bits") (param $x (ref eq)) (result (ref $Float))
