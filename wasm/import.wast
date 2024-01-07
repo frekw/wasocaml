@@ -41,7 +41,7 @@
   ;; =====
 
   (func (export "caml_create_bytes") (param $size (ref eq)) (result (ref eq))
-      (array.new_canon_default $String (i31.get_s (ref.cast i31 (local.get $size))))
+      (array.new_canon_default $String (i31.get_s (ref.cast (ref i31) (local.get $size))))
   )
 
   (func $caml_fill_bytes (param $arr (ref $String))
@@ -63,9 +63,9 @@
                                    (param $value (ref eq)) (result (ref eq))
     (call $caml_fill_bytes
       (ref.cast $String (local.get $arr))
-      (i31.get_s (ref.cast i31 (local.get $off)))
-      (i31.get_s (ref.cast i31 (local.get $length)))
-      (i31.get_s (ref.cast i31 (local.get $value))))
+      (i31.get_s (ref.cast (ref i31) (local.get $off)))
+      (i31.get_s (ref.cast (ref i31) (local.get $length)))
+      (i31.get_s (ref.cast (ref i31) (local.get $value))))
     (ref.i31 (i32.const 0)))
 
   (export "caml_bytes_equal" (func $string_eq))
@@ -147,10 +147,10 @@
     ;; ========
 
   (func (export "caml_ml_open_descriptor_out") (param (ref eq)) (result (ref eq))
-    (ref.cast i31 (local.get 0)))
+    (ref.cast (ref i31) (local.get 0)))
 
   (func (export "caml_ml_open_descriptor_in") (param (ref eq)) (result (ref eq))
-    (ref.cast i31 (local.get 0)))
+    (ref.cast (ref i31) (local.get 0)))
 
   (func (export "caml_sys_open") (param (ref eq)) (param (ref eq))
                                  (param (ref eq))

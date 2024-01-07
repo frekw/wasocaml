@@ -6,8 +6,8 @@
 
   (func (export "compare_ints") (param $a (ref eq)) (param $b (ref eq)) (result (ref eq))
     (local $a' i32) (local $b' i32)
-    (local.set $a' (i31.get_s (ref.cast i31 (local.get $a))))
-    (local.set $b' (i31.get_s (ref.cast i31 (local.get $b))))
+    (local.set $a' (i31.get_s (ref.cast (ref i31) (local.get $a))))
+    (local.set $b' (i31.get_s (ref.cast (ref i31) (local.get $b))))
     (ref.i31
       (i32.sub
         (i32.gt_s (local.get $a') (local.get $b'))
@@ -43,7 +43,7 @@
     (struct.new_canon $Float
       (array.get $FloatArray
         (local.get $arr)
-        (i31.get_s (ref.cast i31 (local.get $field)))))
+        (i31.get_s (ref.cast (ref i31) (local.get $field)))))
   )
 
   (func (export "array_get_float_safe") (param $arr (ref eq)) (param $field (ref eq)) (result (ref eq))
@@ -55,7 +55,7 @@
     ;; TODO exceptions
     (array.get $Array
       (local.get $arr)
-      (i31.get_s (ref.cast i31 (local.get $field))))
+      (i31.get_s (ref.cast (ref i31) (local.get $field))))
   )
 
   (func (export "array_get_int_or_addr_safe") (param $arr (ref eq)) (param $field (ref eq)) (result (ref eq))
@@ -77,7 +77,7 @@
                                 (param $value (ref eq)) (result (ref eq))
       (array.set $FloatArray
         (local.get $arr)
-        (i31.get_s (ref.cast i31 (local.get $field)))
+        (i31.get_s (ref.cast (ref i31) (local.get $field)))
         (struct.get $Float 0 (ref.cast $Float (local.get $value))))
       (ref.i31 (i32.const 0))
   )
@@ -86,7 +86,7 @@
                                       (param $value (ref eq)) (result (ref eq))
       (array.set $Array
         (local.get $arr)
-        (i31.get_s (ref.cast i31 (local.get $field)))
+        (i31.get_s (ref.cast (ref i31) (local.get $field)))
         (local.get $value))
       (ref.i31 (i32.const 0))
   )
@@ -122,8 +122,8 @@
       ;; TODO exceptions
       (array.set $String
         (ref.cast $String (local.get $arr))
-        (i31.get_s (ref.cast i31 (local.get $field)))
-        (i31.get_s (ref.cast i31 (local.get $value))))
+        (i31.get_s (ref.cast (ref i31) (local.get $field)))
+        (i31.get_s (ref.cast (ref i31) (local.get $value))))
       (ref.i31 (i32.const 0))
   )
 
@@ -133,7 +133,7 @@
       (ref.i31
         (array.get_s $String
           (ref.cast $String (local.get $arr))
-          (i31.get_s (ref.cast i31 (local.get $field)))))
+          (i31.get_s (ref.cast (ref i31) (local.get $field)))))
   )
 
   (func $string_eq (param $a (ref $String)) (param $b (ref $String)) (result i32)

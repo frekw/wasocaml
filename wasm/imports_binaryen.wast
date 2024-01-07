@@ -59,7 +59,7 @@
   ;; =====
 
   (func (export "caml_create_bytes") (param $size (ref eq)) (result (ref eq))
-      (array.new_default $String (i31.get_s (ref.cast i31 (local.get $size))))
+      (array.new_default $String (i31.get_s (ref.cast (ref i31) (local.get $size))))
   )
 
   ;; (func $caml_fill_bytes (param $arr (ref $String))
@@ -81,9 +81,9 @@
   ;;                                  (param $value (ref eq)) (result (ref eq))
   ;;   (call $caml_fill_bytes
   ;;     (ref.cast $String (local.get $arr))
-  ;;     (i31.get_s (ref.cast i31 (local.get $off)))
-  ;;     (i31.get_s (ref.cast i31 (local.get $length)))
-  ;;     (i31.get_s (ref.cast i31 (local.get $value))))
+  ;;     (i31.get_s (ref.cast (ref i31) (local.get $off)))
+  ;;     (i31.get_s (ref.cast (ref i31) (local.get $length)))
+  ;;     (i31.get_s (ref.cast (ref i31) (local.get $value))))
   ;;   (ref.i31 (i32.const 0)))
 
   (export "caml_bytes_equal" (func $string_eq))
@@ -323,7 +323,7 @@
       (local.get $s))
 
   (func (export "caml_format_int") (param $format (ref eq)) (param $d (ref eq)) (result (ref eq))
-      (call $format_int_default (i31.get_s (ref.cast i31 (local.get $d)))))
+      (call $format_int_default (i31.get_s (ref.cast (ref i31) (local.get $d)))))
 
   (func (export "caml_format_float") (param (ref eq)) (param (ref eq)) (result (ref eq))
       ;; TODO
@@ -341,10 +341,10 @@
     ;; ========
 
   (func (export "caml_ml_open_descriptor_out") (param (ref eq)) (result (ref eq))
-    (ref.cast i31 (local.get 0)))
+    (ref.cast (ref i31) (local.get 0)))
 
   (func (export "caml_ml_open_descriptor_in") (param (ref eq)) (result (ref eq))
-    (ref.cast i31 (local.get 0)))
+    (ref.cast (ref i31) (local.get 0)))
 
   (func (export "caml_sys_open") (param (ref eq)) (param (ref eq))
                                  (param (ref eq))
@@ -374,8 +374,8 @@
       (param $ch (ref eq)) (param $s (ref eq)) (param $vpos (ref eq))
       (param $vlen (ref eq)) (result (ref eq))
       (local $pos i32) (local $len i32)
-      (local.set $pos (i31.get_s (ref.cast i31 (local.get $vpos))))
-      (local.set $len (i31.get_s (ref.cast i31 (local.get $vlen))))
+      (local.set $pos (i31.get_s (ref.cast (ref i31) (local.get $vpos))))
+      (local.set $len (i31.get_s (ref.cast (ref i31) (local.get $vlen))))
       (loop $loop
          (if (i32.gt_s (local.get $len) (i32.const 0))
             (then
@@ -400,7 +400,7 @@
 
   (func (export "caml_ml_output_char") (param $ch (ref eq)) (param $char (ref eq))
                                    (result (ref eq))
-    (call $putchar (i31.get_s (ref.cast i31 (local.get $char))))
+    (call $putchar (i31.get_s (ref.cast (ref i31) (local.get $char))))
     (ref.i31 (i32.const 0))
   )
 
@@ -582,7 +582,7 @@
   ;; ====
 
   (func (export "print_int") (param $a (ref eq)) (result (ref eq))
-    (call $print_i32 (i31.get_s (ref.cast i31 (local.get $a))))
+    (call $print_i32 (i31.get_s (ref.cast (ref i31) (local.get $a))))
     (ref.i31 (i32.const 0))
   )
   (func (export "print_float") (param $a (ref eq)) (result (ref eq))
