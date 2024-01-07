@@ -358,7 +358,7 @@
       (i31.new (i32.const 0)))
 
   (func $cons (param $h (ref eq)) (param $t (ref eq)) (result (ref $Gen_block))
-     (array.init_static $Gen_block
+     (array.new_fixed $Gen_block
        (i31.new (i32.const 0))
        (local.get $h)
        (local.get $t)))
@@ -506,17 +506,17 @@
 
  (func $C_caml_sys_getenv  (export "caml_sys_getenv") (param (ref eq)) (result (ref eq)) (unreachable))
 
- (global $os_type (ref $String) (array.init_static $String (i32.const 87)(i32.const 97)(i32.const 115)(i32.const 109)))
+ (global $os_type (ref $String) (array.new_fixed $String (i32.const 87)(i32.const 97)(i32.const 115)(i32.const 109)))
 
  (func $C_caml_sys_get_config  (export "caml_sys_get_config") (param (ref eq)) (result (ref eq))
-   (array.init_static $Gen_block (i31.new (i32.const 0))
+   (array.new_fixed $Gen_block (i31.new (i32.const 0))
      (global.get $os_type)
      (i31.new (i32.const 32))
      (i31.new (i32.const 0))
    )
  )
 
-  (global $executable_name (ref $String) (array.init_static $String (i32.const 119)(i32.const 97)(i32.const 115)(i32.const 111)(i32.const 99)(i32.const 97)(i32.const 109)(i32.const 108)(i32.const 95)(i32.const 98)(i32.const 105)(i32.const 110)(i32.const 97)(i32.const 114)(i32.const 121)))
+  (global $executable_name (ref $String) (array.new_fixed $String (i32.const 119)(i32.const 97)(i32.const 115)(i32.const 111)(i32.const 99)(i32.const 97)(i32.const 109)(i32.const 108)(i32.const 95)(i32.const 98)(i32.const 105)(i32.const 110)(i32.const 97)(i32.const 114)(i32.const 121)))
 
  (func $C_caml_sys_executable_name  (export "caml_sys_executable_name") (param (ref eq)) (result (ref eq))
    (global.get $executable_name))

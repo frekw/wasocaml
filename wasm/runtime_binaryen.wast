@@ -11,7 +11,7 @@
   ;; ==========
 
   (global $index_out_of_bound_string (ref $String)
-     (array.init_static $String
+     (array.new_fixed $String
        (i32.const 105)(i32.const 110)(i32.const 100)(i32.const 101)(i32.const 120)
        (i32.const 32)(i32.const 111)(i32.const 117)(i32.const 116)(i32.const 32)
        (i32.const 111)(i32.const 102)(i32.const 32)(i32.const 98)(i32.const 111)
@@ -19,29 +19,29 @@
 
   ;; TODO exceptions
   (global (export "caml_exn_Match_failure") (ref eq)
-       (array.init_static $Gen_block
+       (array.new_fixed $Gen_block
        (i31.new (i32.const 248))
-       (array.init_static $String (i32.const 78) (i32.const 78) (i32.const 78))
+       (array.new_fixed $String (i32.const 78) (i32.const 78) (i32.const 78))
        (i31.new (i32.const 0))))
   (global (export "caml_exn_Assert_failure") (ref eq)
-       (array.init_static $Gen_block
+       (array.new_fixed $Gen_block
        (i31.new (i32.const 248))
-       (array.init_static $String (i32.const 78) (i32.const 78) (i32.const 78))
+       (array.new_fixed $String (i32.const 78) (i32.const 78) (i32.const 78))
        (i31.new (i32.const 1))))
   (global $invalid_argument (export "caml_exn_Invalid_argument") (ref eq)
-       (array.init_static $Gen_block
+       (array.new_fixed $Gen_block
        (i31.new (i32.const 248))
-       (array.init_static $String (i32.const 78) (i32.const 78) (i32.const 78))
+       (array.new_fixed $String (i32.const 78) (i32.const 78) (i32.const 78))
        (i31.new (i32.const 2))))
   (global (export "caml_exn_Failure") (ref eq)
-       (array.init_static $Gen_block
+       (array.new_fixed $Gen_block
        (i31.new (i32.const 248))
-       (array.init_static $String (i32.const 78) (i32.const 78) (i32.const 78))
+       (array.new_fixed $String (i32.const 78) (i32.const 78) (i32.const 78))
        (i31.new (i32.const 3))))
   (global (export "caml_exn_Not_found") (ref eq)
-     (array.init_static $Gen_block
+     (array.new_fixed $Gen_block
        (i31.new (i32.const 248))
-       (array.init_static $String (i32.const 78) (i32.const 78) (i32.const 78))
+       (array.new_fixed $String (i32.const 78) (i32.const 78) (i32.const 78))
        (i31.new (i32.const 4))))
 
   (global (export "caml_exn_Out_of_memory") (ref eq) (i31.new (i32.const 5)))
@@ -202,7 +202,7 @@
               (local.get $field))))
         (else
           (throw $exc
-            (array.init_static $Gen_block
+            (array.new_fixed $Gen_block
               (i31.new (i32.const 0))
               (global.get $invalid_argument)
               (global.get $index_out_of_bound_string)))))
